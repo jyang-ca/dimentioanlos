@@ -27,6 +27,7 @@ from dimos.stream.audio.base import (
     AudioEvent,
 )
 from dimos.stream.audio.text.base import AbstractTextConsumer, AbstractTextEmitter
+from dimos.utils.openai_client import build_openai_client_kwargs
 from dimos.utils.logging_config import setup_logger
 
 logger = setup_logger()
@@ -75,7 +76,7 @@ class OpenAITTSNode(AbstractTextConsumer, AbstractAudioEmitter, AbstractTextEmit
         self.buffer_size = buffer_size
 
         # Initialize OpenAI client
-        self.client = OpenAI(api_key=api_key)
+        self.client = OpenAI(**build_openai_client_kwargs(api_key=api_key))
 
         # Initialize state
         self.audio_subject = Subject()  # type: ignore[var-annotated]

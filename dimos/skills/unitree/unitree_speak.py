@@ -15,7 +15,6 @@
 import base64
 import hashlib
 import json
-import os
 import tempfile
 import time
 
@@ -26,6 +25,7 @@ import soundfile as sf  # type: ignore[import-untyped]
 from unitree_webrtc_connect.constants import RTC_TOPIC
 
 from dimos.skills.skills import AbstractRobotSkill
+from dimos.utils.openai_client import build_openai_client_kwargs
 from dimos.utils.logging_config import setup_logger
 
 logger = setup_logger()
@@ -64,7 +64,7 @@ class UnitreeSpeak(AbstractRobotSkill):
 
     def _get_openai_client(self):  # type: ignore[no-untyped-def]
         if self._openai_client is None:
-            self._openai_client = OpenAI()  # type: ignore[assignment]
+            self._openai_client = OpenAI(**build_openai_client_kwargs())  # type: ignore[assignment]
         return self._openai_client
 
     def _generate_audio(self, text: str) -> bytes:

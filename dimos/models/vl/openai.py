@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from functools import cached_property
-import os
 from typing import Any
 
 import numpy as np
@@ -8,6 +7,7 @@ from openai import OpenAI
 
 from dimos.models.vl.base import VlModel, VlModelConfig
 from dimos.msgs.sensor_msgs import Image
+from dimos.utils.openai_client import build_openai_client_kwargs
 from dimos.utils.logging_config import setup_logger
 
 logger = setup_logger()
@@ -25,13 +25,13 @@ class OpenAIVlModel(VlModel):
 
     @cached_property
     def _client(self) -> OpenAI:
-        api_key = self.config.api_key or os.getenv("OPENAI_API_KEY")
-        if not api_key:
+        client_kwargs = build_openai_client_kwargs(api_key=self.config.api_key)
+        if "api_key" not in client_kwargs:
             raise ValueError(
                 "OpenAI API key must be provided or set in OPENAI_API_KEY environment variable"
             )
 
-        return OpenAI(api_key=api_key)
+        return OpenAI(**client_kwargs)
 
     def query(self, image: Image | np.ndarray, query: str, response_format: dict | None = None, **kwargs) -> str:  # type: ignore[override, type-arg, no-untyped-def]
         if isinstance(image, np.ndarray):
@@ -103,4 +103,3 @@ class OpenAIVlModel(VlModel):
         """Release the OpenAI client."""
         if "_client" in self.__dict__:
             del self.__dict__["_client"]
-
