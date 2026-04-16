@@ -77,3 +77,5 @@ CLAUDE.MD
 htmlcov/
 .coverage
 .coverage.*
+
+.omx
